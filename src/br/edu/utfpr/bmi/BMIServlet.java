@@ -19,21 +19,13 @@ public class BMIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		
 		String weight = request.getParameter("weight");
-		String height = request.getParameter("height");
+		String height = request.getParameter("height");		
 		
 		//trocar virgula por ponto
 		weight = weight.replaceAll(",", ".");
@@ -45,14 +37,25 @@ public class BMIServlet extends HttpServlet {
 			h = Float.parseFloat(height);
 		}
 		catch (NumberFormatException e) {
-			out.append("Digite um número válido");
+//			String address = "/error.html";
+//			request.getRequestDispatcher(address).forward(request, response);
+			
+			String address = "bmi-form.html";
+			response.sendRedirect(address);
 			return;
+		}
+		
+		//redirecionamento
+		if(h > 2) {
+			String address = "https://www.google.com";
+			response.sendRedirect(address);			
 		}
 		
 		//out.append("Peso: " + weight + " Altura: " + height);
 		float bmi = calculateBMI(w,  h);
-		out.printf("<br>IMC: %08.2f", bmi);
-		out.print("<br>Categoria: " + getCategory(bmi));
+		String address = "/resultado";
+		request.setAttribute("bmi", bmi);		
+ 		request.getRequestDispatcher(address).forward(request, response); 
 	}
 	
 	/**
@@ -66,25 +69,6 @@ public class BMIServlet extends HttpServlet {
 		return weight/(height * height);		
 	}
 	
-	/**
-	 * 
-	 * Retorna a categoria em relação ao peso
-	 * @param bmi
-	 * @return
-	 */
-	private String getCategory(float bmi) {
-		if(bmi < BMIConstants.BELOW_WEIGHT) {
-			return "Abaixo do peso";
-		}
-		else if(bmi < BMIConstants.NORMAL_WEIGHT) {
-			return "Peso normal";
-		}
-		else if(bmi < BMIConstants.ABOVE_WEIGHT) {
-			return "Acima do peso";
-		}
-		else {
-			return "Obeso";
-		}		
-	}
+	
 
 }
