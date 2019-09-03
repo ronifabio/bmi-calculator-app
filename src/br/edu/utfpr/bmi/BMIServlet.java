@@ -8,8 +8,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import br.edu.utfpr.bmi.util.BMIConstants;
+import br.edu.utfpr.bmi.util.Constants;
 
 /**
  * Servlet implementation class BMIServlet
@@ -22,6 +24,15 @@ public class BMIServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//verifica se está logado
+		HttpSession session = request.getSession(false);
+		if(session == null || ((boolean)session.getAttribute(Constants.IS_LOGGED_IN) == false)) {
+			String address = "index.html";
+			response.sendRedirect(address);
+			return;
+		}
+		
 		PrintWriter out = response.getWriter();
 		
 		String weight = request.getParameter("weight");
